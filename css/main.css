@@ -1,23 +1,19 @@
-html, body {
-    height: 100%;
-}
-
 body {
     background-image: url('../img/stars.png');
+    background-attachment: fixed;
     
     -webkit-animation: space 30s linear 0s infinite;
     animation: space 30s linear 0s infinite;
 }
 
-.center-tbl {
-    height: 100%;
-    width: 100%;
-    display: table;
-}
-
-.center-cell {
-    display: table-cell;
-    vertical-align: middle;
+.banana-container {
+    width: 300px;
+    height: 300px;
+    
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+    margin-bottom: 100px;
 }
 
 .banana {
@@ -28,10 +24,21 @@ body {
     width: 300px;
     height: 300px;
     
-    margin: auto;
-    
     -webkit-animation: spin 20s linear 0s infinite;
     animation: spin 20s linear 0s infinite;
+}
+
+.name {
+    background-image: url('../img/spacebananas.png');
+    background-repeat: no-repeat;
+    background-position: 0px 20px;
+    
+    width: 465px;
+    height: 236px;
+    
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 20px;
 }
 
 @-webkit-keyframes space {
