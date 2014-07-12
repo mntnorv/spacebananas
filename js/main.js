@@ -25,13 +25,13 @@ var Star = function(texture, minX, minY, maxX, maxY) {
   this.randomize(minX, minY, maxX, maxY);
 };
 
-Star.prototype.addToStage = function(stage) {
-  stage.addChild(this.obj);
-  this.stage = stage;
+Star.prototype.addToContainer = function(container) {
+  container.addChild(this.obj);
+  this.container = container;
 };
 
-Star.prototype.removeFromStage = function() {
-  this.stage.removeChild(this.obj);
+Star.prototype.removeFromContainer = function() {
+  this.container.removeChild(this.obj);
 };
 
 Star.prototype.removeIfOutOfBounds = function(screenW, screenH) {
@@ -40,7 +40,7 @@ Star.prototype.removeIfOutOfBounds = function(screenW, screenH) {
   var halfSize = this.obj.height / 2;
 
   if ((x > screenW + halfSize) || (y > screenH + halfSize)) {
-    this.removeFromStage();
+    this.removeFromContainer();
     return true;
   } else {
     return false;
@@ -78,8 +78,20 @@ window.addEventListener('load', function() {
   document.body.appendChild(renderer.view);
   var stage = new PIXI.Stage;
 
+  var background = new PIXI.DisplayObjectContainer();
+  var foreground = new PIXI.DisplayObjectContainer();
+
+  stage.addChild(background);
+  stage.addChild(foreground);
+
   var bananaTexture = PIXI.Texture.fromImage('img/small.png');
+  var titleTexture  = PIXI.Texture.fromImage('img/title.png');
   var bananas = [];
+
+  var title = new PIXI.Sprite(titleTexture);
+  title.anchor.x = 0.5;
+  title.anchor.y = 0.5;
+  foreground.addChild(title);
 
   function bananasInSpace(space) {
     return space / 10000;
@@ -88,7 +100,7 @@ window.addEventListener('load', function() {
   function addBananas(minX, minY, maxX, maxY, count) {
     for (var i = 0; i < count; i++) {
       var banana = new Star(bananaTexture, minX, minY, maxX, maxY);
-      banana.addToStage(stage);
+      banana.addToContainer(background);
       bananas.push(banana);
     }
   }
@@ -101,7 +113,7 @@ window.addEventListener('load', function() {
     toRemove.sort(function(a, b) { return a - b; });
 
     for (var i = toRemove.length - 1; i >= 0; i--) {
-      bananas[toRemove[i]].removeFromStage();
+      bananas[toRemove[i]].removeFromContainer();
       bananas.splice(toRemove[i], 1);
     }
   }
@@ -150,6 +162,9 @@ window.addEventListener('load', function() {
     addBananasAfterResize(newW, newH);
     removeOutOfBoundsBananas(newW, newH);
     balanceBananaCount(newW, newH);
+
+    title.position.x = Math.floor(newW / 2);
+    title.position.y = Math.floor(newH / 2);
 
     w = newW;
     h = newH;
