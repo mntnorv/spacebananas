@@ -1,3 +1,42 @@
+function getRandom(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+var Star = function(texture, screenW, screenH) {
+  this.obj = new PIXI.Sprite(texture);
+  this.obj.anchor = 0.5;
+  this.obj.anchor = 0.5;
+
+  this.randomize(screenW, screenH);
+};
+
+Star.prototype.addToStage = function(stage) {
+  stage.addChild(this.obj);
+};
+
+Star.prototype.randomize = function(screenW, screenH) {
+  this.obj.position.x = getRandom(0, screenW);
+  this.obj.position.y = getRandom(0, screenH);
+  this.obj.rotation = getRandom(0, 90);
+
+  var scale = getRandom(0.5, 1);
+  this.obj.scale.x = scale;
+  this.obj.scale.y = scale;
+
+  this.moveSpeed = scale;
+  this.rotSpeed  = getRandom(0.005, 0.3);
+};
+
+Star.prototype.nextFrame = function(screenW, screenH) {
+  this.obj.rotation   += this.rotSpeed;
+  this.obj.position.x -= this.moveSpeed;
+
+  if (this.obj.position.x < ((- this.obj.width) / 2)) {
+    this.randomize(screenW, screenH);
+    this.obj.position.x = screenW + (this.obj.width / 2);
+  }
+};
+
 window.onload = function() {
   var w = 800;
   var h = 600;
@@ -9,65 +48,19 @@ window.onload = function() {
 
   var bananaTexture = PIXI.Texture.fromImage("img/small.png");
   var bananas = [];
-  var bananaData = [];
 
   for (var i = 0; i < 100; i++) {
-    var banana = new PIXI.Sprite(bananaTexture);
-
-    banana.anchor.x = 0.5;
-    banana.anchor.y = 0.5;
-
-    stage.addChild(banana);
+    var banana = new Star(bananaTexture, w, h);
+    banana.addToStage(stage);
     bananas.push(banana);
-  }
-
-  function getRandom(min, max) {
-    return Math.random() * (max - min) + min;
-  }
-
-  function renewBanana(i) {
-    bananas[i].position.x = w + 8;
-    bananas[i].position.y = getRandom(0, h);
-
-    var scale = getRandom(0.5, 1);
-    bananas[i].scale.x = scale;
-    bananas[i].scale.y = scale;
-
-    bananaData[i] = {
-      moveSpeed: scale,
-      rotSpeed: getRandom(0.005, 0.3)
-    };
-  }
-
-  function randomizeAll() {
-    for (var i = bananas.length - 1; i >= 0; i--) {
-      bananas[i].position.x = getRandom(0, w);
-      bananas[i].position.y = getRandom(0, h);
-      bananas[i].rotation = getRandom(0, 90);
-
-      var scale = getRandom(0.5, 1);
-      bananas[i].scale.x = scale;
-      bananas[i].scale.y = scale;
-
-      bananaData[i] = {
-        moveSpeed: scale,
-        rotSpeed: getRandom(0.005, 0.3)
-      };
-    }
   }
 
   function animateBananas() {
     for (var i = bananas.length - 1; i >= 0; i--) {
-      bananas[i].rotation   += bananaData[i].rotSpeed;
-      bananas[i].position.x -= bananaData[i].moveSpeed;
-
-      if (bananas[i].position.x < -8) {
-        renewBanana(i);
-      }
+      bananas[i].nextFrame(w, h);
     }
   }
 
-  randomizeAll();
   requestAnimationFrame(animate);
 
   function animate() {
@@ -75,4 +68,4 @@ window.onload = function() {
     renderer.render(stage);
     requestAnimationFrame(animate);
   }
-}
+};
